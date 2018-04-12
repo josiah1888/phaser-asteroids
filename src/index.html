@@ -49,7 +49,7 @@
 
             ship = this.physics.add.image(400, 100, 'logo');
 
-            ship.setBounce(1, 1);
+            // ship.setBounce(1, 1);
             ship.setCollideWorldBounds(true);
 
             emitter.startFollow(ship);
@@ -60,20 +60,27 @@
                 initialize: function Bullet(scene) {
                     Phaser.GameObjects.Image.call(this, scene, 0, 0, 'bullet');
 
-                    this.speed = Phaser.Math.GetSpeed(600, 1);
+                    this.speed = .01
                 },
 
-                fire: function (x, y) {
+                fire: function (x, y, angle) {
                     this.setPosition(x, y);
+                    this.angle = angle;
 
                     this.setActive(true);
                     this.setVisible(true);
                 },
 
                 update: function (time, delta) {
-                    this.y += this.speed * delta;
 
-                    if (this.y > 820) {
+                    // this.y += this.speed * delta;
+                    var v = velocityByAngle(this.angle, 90);
+                    this.x += v.x * this.speed * delta;
+                    this.y += v.y * this.speed * delta;
+
+                    console.log(this.x, this.y)
+
+                    if (this.y > 620) {
                         this.setActive(false);
                         this.setVisible(false);
                     }
@@ -100,10 +107,10 @@
                 var bullet = bullets.get();
 
                 if (bullet) {
-                    bullet.fire(ship.x, ship.y);
+                    bullet.fire(ship.x, ship.y, ship.angle);
                 }
             }
-            
+
             // sprite.body.velocity.x = 0;
             // sprite.body.velocity.y = 0;
             // sprite.body.angularVelocity = 0;
@@ -125,24 +132,31 @@
 
             left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
             if (Phaser.Input.Keyboard.JustDown(left)) {
-              ship.angle -= 5;
+                ship.angle -= 5;
             }
 
             right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
             if (Phaser.Input.Keyboard.JustDown(right)) {
-              ship.angle += 5;
+                ship.angle += 5;
             }
 
             up = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
             if (Phaser.Input.Keyboard.JustDown(up)) {
-                // physics.velocityFromAngle(ship.angle, 300, ship.body.velocity);
-                // todo, make this thing work
-                ship.setVelocity(50);
+                ship.setVelocityX(velocityByAngle(ship.angle, 90).x);
+                ship.setVelocityY(velocityByAngle(ship.angle, 90).y);
             }
-        
+
             down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
             if (Phaser.Input.Keyboard.JustDown(down)) {
-              ship.setVelocity (0);
+                ship.setVelocity(0);
+            }
+        }
+
+        function velocityByAngle(angle, offset) {
+            var radians = Math.PI / 180 * (angle + offset);
+            return {
+                x: 50 * Math.cos(radians),
+                y: 50 * Math.sin(radians)
             }
         }
 
