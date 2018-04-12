@@ -135,7 +135,9 @@
 
             up = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
             if (Phaser.Input.Keyboard.JustDown(up)) {
-                game.physics.arcade.velocityFromAngle(ship.angle, 300, ship.body.velocity);
+                // physics.velocityFromAngle(ship.angle, 300, ship.body.velocity);
+                // todo, make this thing work
+                ship.setVelocity(50);
             }
         
             down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
